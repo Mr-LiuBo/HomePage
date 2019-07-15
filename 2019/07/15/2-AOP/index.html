@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.2" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Spring对AOP的支持 Spring在运行时通知对象。 Spring AOP构建在动态代理基础之上，因此，Spring对AOP的支持局限于方法拦截。它只支持方法级别的连接点。Spring缺少对字段连接点的支持，无法让我们创建细粒度的通知，例如拦截对象字段的修改。而且它不支持构造器连接点，我们就无法在bean创建时应用通知。但方法拦截可以满足绝大部分的需求。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.AOP">
+<meta property="og:url" content="http://yoursite.com/2019/07/15/2-AOP/index.html">
+<meta property="og:site_name" content="Biu__">
+<meta property="og:description" content="Spring对AOP的支持 Spring在运行时通知对象。 Spring AOP构建在动态代理基础之上，因此，Spring对AOP的支持局限于方法拦截。它只支持方法级别的连接点。Spring缺少对字段连接点的支持，无法让我们创建细粒度的通知，例如拦截对象字段的修改。而且它不支持构造器连接点，我们就无法在bean创建时应用通知。但方法拦截可以满足绝大部分的需求。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E9%80%9A%E7%9F%A5%E7%BB%87%E5%85%A5%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E6%AD%A3%E5%B8%B8%E9%80%9A%E7%9F%A5.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E5%BC%82%E5%B8%B8%E9%80%9A%E7%9F%A5.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E5%A4%84%E7%90%86%E9%80%9A%E7%9F%A5%E4%B8%AD%E5%8F%82%E6%95%B0%E7%A4%BA%E4%BE%8B%E7%9A%84%E6%89%93%E5%8D%B0%E7%BB%93%E6%9E%9C.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E4%BD%BF%E7%94%A8JavaConfig%E8%A3%85%E9%85%8D%E5%88%87%E9%9D%A2.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E4%BD%BF%E7%94%A8XML%E8%A3%85%E9%85%8D%E5%88%87%E9%9D%A2.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E9%9D%9E%E7%8E%AF%E7%BB%95%E9%80%9A%E7%9F%A5%E7%A4%BA%E4%BE%8B.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/pointcut%E7%A4%BA%E4%BE%8B.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E7%8E%AF%E7%BB%95%E9%80%9A%E7%9F%A5%E7%A4%BA%E4%BE%8B.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E8%A2%AB%E5%90%8C%E4%B8%80%E4%B8%AA%E5%88%87%E9%9D%A2%E5%A4%9A%E4%B8%AA%E6%96%B9%E6%B3%95%E6%8B%A6%E6%88%AA%E6%97%A0%E6%B3%95%E6%8E%92%E5%BA%8F.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E5%90%91aop%E4%B8%AD%E5%BC%95%E5%85%A5%E6%96%B0%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="https://pic.liuxiaopang.cn/spring/aop/%E6%B3%A8%E5%85%A5%E5%87%BA%E9%94%99%E6%8F%90%E7%A4%BA.png">
+<meta property="og:updated_time" content="2019-07-15T09:11:25.476Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2.AOP">
+<meta name="twitter:description" content="Spring对AOP的支持 Spring在运行时通知对象。 Spring AOP构建在动态代理基础之上，因此，Spring对AOP的支持局限于方法拦截。它只支持方法级别的连接点。Spring缺少对字段连接点的支持，无法让我们创建细粒度的通知，例如拦截对象字段的修改。而且它不支持构造器连接点，我们就无法在bean创建时应用通知。但方法拦截可以满足绝大部分的需求。">
+<meta name="twitter:image" content="https://pic.liuxiaopang.cn/spring/aop/%E9%80%9A%E7%9F%A5%E7%BB%87%E5%85%A5%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/07/15/2-AOP/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2.AOP | Biu__</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?eac2abc79a6d02d67eb6e1e6b4ea2edc";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Biu__</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/15/2-AOP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LiuBo">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Biu__">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2.AOP
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-15 17:09:28 / 修改时间：17:11:25" itemprop="dateCreated datePublished" datetime="2019-07-15T17:09:28+08:00">2019-07-15</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Spring对AOP的支持"><a href="#Spring对AOP的支持" class="headerlink" title="Spring对AOP的支持"></a>Spring对AOP的支持</h3><ul>
+<li>Spring在运行时通知对象。</li>
+<li>Spring AOP构建在动态代理基础之上，因此，Spring对AOP的支持局限于方法拦截。它只支持方法级别的连接点。Spring缺少对字段连接点的支持，无法让我们创建细粒度的通知，例如拦截对象字段的修改。而且它不支持构造器连接点，我们就无法在bean创建时应用通知。但方法拦截可以满足绝大部分的需求。</li>
+</ul>
+<a id="more"></a>
+
+
+
+<h3 id="AOP术语"><a href="#AOP术语" class="headerlink" title="AOP术语"></a>AOP术语</h3><p><img src="https://pic.liuxiaopang.cn/spring/aop/%E9%80%9A%E7%9F%A5%E7%BB%87%E5%85%A5%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B.png" alt="通知织入程序示例"></p>
+<p>图中说明阐述了定义，遗憾的事，它们并不容易理解。下面举例说明。</p>
+<h4 id="通知（Advice）"><a href="#通知（Advice）" class="headerlink" title="通知（Advice）"></a>通知（Advice）</h4><p>当抄表员出现在我们家门口时，他们要登记用电量并回去向电力公司报告。记录用电量是抄表员的主要工作。<strong><em>通知定义了什么时候作什么事情</em></strong></p>
+<blockquote>
+<p>在AOP术语中，切面必须要完成的工作被称为通知。<br>通知还解决了何时执行这个工作的问题。</p>
+</blockquote>
+<ul>
+<li>前置通知（@Before）：在目标方法被调用之前调用通知功能；</li>
+<li>后置通知（@After）：在目标方法完成之后调用通知，此时不会关心方法的输出是什么；</li>
+<li>返回通知（@AfterReturning）：在目标方法成功执行之后调用通知；</li>
+<li>异常通知（@AfterThrowing）：在目标方法抛出异常后调用通知；</li>
+<li>环绕通知（@Around）：如图所示,并参照<a href="#环绕通知"><u><strong><em>环绕通知</em></strong></u></a>。</li>
+</ul>
+<p>正常：</p>
+<p><img src="https://pic.liuxiaopang.cn/spring/aop/%E6%AD%A3%E5%B8%B8%E9%80%9A%E7%9F%A5.png" alt="正常通知"></p>
+<p>异常：</p>
+<p><img src="https://pic.liuxiaopang.cn/spring/aop/%E5%BC%82%E5%B8%B8%E9%80%9A%E7%9F%A5.png" alt="异常通知"></p>
+<h4 id="连接点（Join-Point）"><a href="#连接点（Join-Point）" class="headerlink" title="连接点（Join Point）"></a>连接点（Join Point）</h4><p>抄表员也许能够读取各种类型的设备，但是为了完成他的工作，他的目标应该是房屋内所安装的电表。</p>
+<blockquote>
+<p>连接点是在应用执行过程中能够插入切面的一个点。这个点可以是调用方法时、抛出异常时、甚至修改一个字段时。切面代码可以利用这些点插入到应用的正常流程之中，并添加新的行为。</p>
+</blockquote>
+<h4 id="切点（Poincut）"><a href="#切点（Poincut）" class="headerlink" title="切点（Poincut）"></a>切点（Poincut）</h4><p>如果让一位抄表员访问电力公司所服务的所有住户，那肯定是不现实的。实际上，电力公司为每一个抄表员都分别指定某一块区域的住户。<strong><em>切点定义了何地</em></strong></p>
+<blockquote>
+<p>类似地，一个切面并不需要通知应用的所有连接点。切点有助于缩小切面所通知的连接点的范围。<br>通知定义了<em>做什么、何时</em>，切点定义了<em>何地</em>。它会匹配一个或者多个连接点。</p>
+</blockquote>
+<h4 id="切面（Aspect）"><a href="#切面（Aspect）" class="headerlink" title="切面（Aspect）"></a>切面（Aspect）</h4><p>切面是通知和切点的结合。通知和切点共同定义了切面的全部内容——它在何时和何处做什么。</p>
+<h4 id="引入（Introduction）"><a href="#引入（Introduction）" class="headerlink" title="引入（Introduction）"></a>引入（Introduction）</h4><p>它允许我们向现有的类添加新方法或者属性。</p>
+<h4 id="织入（Weaving）"><a href="#织入（Weaving）" class="headerlink" title="织入（Weaving）"></a>织入（Weaving）</h4><p>切面在指定的连接点被织入到目标对象中。在目标对象的生命周期里有多个点可以进行织入：</p>
+<ul>
+<li>编译期：切面在目标类编译时被织入。</li>
+<li>类加载期：切面在目标类加载到JVM时被织入。</li>
+<li>运行期：切面在应用运行的某个时刻被织入。</li>
+</ul>
+<h3 id="切点"><a href="#切点" class="headerlink" title="切点"></a>切点</h3><h4 id="切点表达式"><a href="#切点表达式" class="headerlink" title="切点表达式"></a>切点表达式</h4><table>
+<thead>
+<tr>
+<th>AspectJ指示器</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>arg()</td>
+<td>限制连接点匹配参数为指定类型的执行方法</td>
+</tr>
+<tr>
+<td>@arg()</td>
+<td>限制连接点匹配参数由指定注解标注的执行方法</td>
+</tr>
+<tr>
+<td>execution()</td>
+<td>用于匹配时连接点的的执行方法</td>
+</tr>
+<tr>
+<td>this()</td>
+<td>限制连接点匹配AOP代理的bean(包含接口)为指定类型。</td>
+</tr>
+<tr>
+<td>target</td>
+<td>限制连接点匹配目标对象(不包含接口)为指定类型。</td>
+</tr>
+<tr>
+<td>@target()</td>
+<td>限制连接点匹配目标对象对应的类要具有指定类型的注解。</td>
+</tr>
+<tr>
+<td>within()</td>
+<td>限制连接点匹配指定的类。</td>
+</tr>
+<tr>
+<td>@within()</td>
+<td>限制连接点匹配指定注解所标注的类。</td>
+</tr>
+<tr>
+<td>@annotation</td>
+<td>限制匹配带有指定注解的连接点</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>以上指示器，注意只有execution指示器是实际执行匹配的，其他都是用来限制匹配的。这说明execution指示器是我们在编写切点定义时最主要使用的指示器。在此基础上，我们使用其他指示器来限制所匹配的切点。</p>
+</blockquote>
+<blockquote>
+<p>在Spring中尝试使用AspectJ其他指示器时，将会抛出<em>IllegalArgument-Exception</em>异常。</p>
+</blockquote>
+<blockquote>
+<p>除了表中的AspectJ指示器外，Spring还引入了一个新的bean()指示器，它允许我们<a href="#bean">在切点表达式中使用bean的ID来标识bean，用来限制切点只匹配特定的bean。</a></p>
+</blockquote>
+<blockquote>
+<p><a href="#@Pointcut()">@Pointcut()</a>是用来定义切点的。</p>
+</blockquote>
+<h4 id="格式"><a href="#格式" class="headerlink" title="格式"></a>格式</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern(param-pattern) <span class="keyword">throws</span>-pattern?)</span><br></pre></td></tr></table></figure>
+
+<p>其中后面跟着“?”的是可选项</p>
+<p>括号中各个pattern分别表示：</p>
+<ul>
+<li><p>修饰符匹配（modifier-pattern?）如public private …</p>
+</li>
+<li><p>返回值匹配（ret-type-pattern）可以为*表示任何返回值,全路径的类名等</p>
+</li>
+<li><p>类路径匹配（declaring-type-pattern?）</p>
+</li>
+<li><p>方法名匹配（name-pattern）可以指定方法名 或者 <em>代表所有, set</em> 代表以set开头的所有方法 </p>
+</li>
+<li><p>参数匹配（(param-pattern)）可以指定具体的参数类型，多个参数间用“,”隔开，各个参数也可以用”*” 来表示匹配任意类型的参数，”..”表示零个或多个任意参数。</p>
+<p>如(String)表示匹配一个String参数的方法；(*,String) 表示匹配有两个参数的方法，第一个参数可以是任意类型，而第二个参数是String类型</p>
+</li>
+<li><p>异常类型匹配（throws-pattern?）</p>
+</li>
+</ul>
+<blockquote>
+<p>通过 &amp;&amp;、 ||、 !、 的方式进行组合</p>
+</blockquote>
+<h4 id="切点表达式示例"><a href="#切点表达式示例" class="headerlink" title="切点表达式示例"></a>切点表达式示例</h4><ul>
+<li><p>任意公共方法的执行：execution(public * *(..))</p>
+<blockquote>
+<p> ..(两个点)表示零个或多个</p>
+</blockquote>
+</li>
+<li><p>任何一个以“set”开始的方法的执行：execution(* set*(..))</p>
+</li>
+<li><p>AccountService 接口的任意方法的执行：execution(* com.xyz.service.AccountService.*(..))</p>
+</li>
+<li><p>定义在service包里的任意方法的执行： execution(* com.xyz.service.<em>.</em>(..)) </p>
+</li>
+<li><p>定义在service包和所有子包里的任意类的任意方法的执行：execution(* com.xyz.service..<em>.</em>(..))</p>
+</li>
+<li><p>定义在pointcutexp包和所有子包里的JoinPointObjP2类的任意方法的执行：<br>execution(* com.test.spring.aop.pointcutexp..JoinPointObjP2.*(..))”)</p>
+</li>
+<li><p>pointcutexp包里的任意类： within(com.test.spring.aop.pointcutexp.*) </p>
+</li>
+<li><p>pointcutexp包和所有子包里的任意类：within(com.test.spring.aop.pointcutexp..*)</p>
+</li>
+<li><p>实现了Intf接口的所有类,如果Intf不是接口,限定Intf单个类：this(com.test.spring.aop.pointcutexp.Intf)</p>
+<p>当一个实现了接口的类被AOP的时候,用getBean方法必须cast为接口类型,不能为该类的类型</p>
+</li>
+<li><p>带有@Transactional标注的所有类的任意方法： </p>
+<ul>
+<li>@within(org.springframework.transaction.annotation.Transactional)</li>
+<li>@target(org.springframework.transaction.annotation.Transactional)</li>
+</ul>
+</li>
+<li><p>带有@Transactional标注的任意方法：@annotation(org.springframework.transaction.annotation.Transactional)</p>
+<blockquote>
+<p>@within和@target针对类的注解,@annotation是针对方法的注解</p>
+</blockquote>
+</li>
+<li><p>参数带有@Transactional标注的方法：@args(org.springframework.transaction.annotation.Transactional)</p>
+</li>
+<li><p>参数为String类型(运行是决定)的方法： args(String) </p>
+</li>
+</ul>
+<h4 id="处理通知中的参数"><a href="#处理通知中的参数" class="headerlink" title="处理通知中的参数"></a>处理通知中的参数</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将被access匹配的目标方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">accessAdvice</span><span class="params">(Date d, String n)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"方法：accessAdvice"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"aa"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AfterReturning</span>(</span><br><span class="line">pointcut=<span class="string">"execution(* com.abc.service.*.access*(..)) &amp;&amp; args(time, name)"</span>,</span><br><span class="line">returning=<span class="string">"returnValue"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">access</span><span class="params">(Date time, Object returnValue, String name)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"目标方法中的参数String = "</span> + name);</span><br><span class="line">    System.out.println(<span class="string">"目标方法中的参数Date = "</span> + time);</span><br><span class="line">    System.out.println(<span class="string">"目标方法的返回结果returnValue = "</span> + returnValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>表达式中增加了args(time, name)部分，意味着可以在增强处理的签名方法（access方法）中定义”time”和”name”两个属性。指定了这两个参数的类型，则这两个形参类型将用于限制该切入点只匹配第一个参数类型为Date，第二个参数类型为String的方法（方法参数个数和类型若有不同均不匹配）；access方法只需要满足”time”, “name”参数的顺序和pointcut中args(param1, param2)的顺序相同即可，”returnValue”位置顺序无所谓。</p>
+<p>结果：</p>
+<p><img src="https://pic.liuxiaopang.cn/spring/aop/%E5%A4%84%E7%90%86%E9%80%9A%E7%9F%A5%E4%B8%AD%E5%8F%82%E6%95%B0%E7%A4%BA%E4%BE%8B%E7%9A%84%E6%89%93%E5%8D%B0%E7%BB%93%E6%9E%9C.png" alt="处理通知中参数示例的打印结果"></p>
+<h5 id="JoinPoint"><a href="#JoinPoint" class="headerlink" title="JoinPoint"></a>JoinPoint</h5><p>常用的方法：</p>
+<ul>
+<li>Object[] getArgs：返回目标方法的参数</li>
+<li>Signature getSignature：返回目标方法的签名</li>
+<li>Object getTarget：返回被织入增强处理的目标对象</li>
+<li>Object getThis：返回AOP框架为目标对象生成的代理对象</li>
+</ul>
+<blockquote>
+<p>用在方法的参数中，当使用@Around处理时，需要将第一个参数定义为ProceedingJoinPoint类型，该类是JoinPoint的子类。其他情况下，如果有JoinPoint则放到参数列表第一位</p>
+</blockquote>
+<h4 id="在切点中选择bean"><a href="#在切点中选择bean" class="headerlink" title="在切点中选择bean"></a><a name="bean">在切点中选择bean</a></h4><p>除了表中的AspectJ指示器外，Spring还引入了一个新的bean()指示器，它允许我们在切点表达式中使用bean的ID来标识bean。用来限制切点只匹配特定的bean。</p>
+<blockquote>
+<p>示例</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> concert;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 定义一个现场表演的接口，如舞台剧、音乐会等。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Performance</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">perform</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>考虑如下切点：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execution(* concert.Performance.perform()) &amp;&amp; bean(<span class="string">'woodstock'</span>)</span><br></pre></td></tr></table></figure>
+
+<p><em>在这里，我们希望在执行perform()方法时应用通知，但限定bean为woodstock（一种音乐节）</em></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execution(* concert.Performance.perform()) &amp;&amp; !bean(<span class="string">'woodstock'</span>)</span><br></pre></td></tr></table></figure>
+
+<p><em>在此场景下，切面的通知会被织入到perform()方法且ID不为woodstock的bean中。</em></p>
+<h3 id="切面"><a href="#切面" class="headerlink" title="切面"></a>切面</h3><h4 id="引入切面"><a href="#引入切面" class="headerlink" title="引入切面"></a>引入切面</h4><h5 id="使用Spring-Boot装配"><a href="#使用Spring-Boot装配" class="headerlink" title="使用Spring Boot装配"></a>使用Spring Boot装配</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 引入Maven --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-aop<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span>  <span class="comment">//标识这是一个切面类</span></span><br><span class="line"><span class="meta">@Configuration</span> <span class="comment">//切面类添加@Configuration注解</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Audience</span> </span>&#123;</span><br><span class="line">    <span class="comment">//省略代码部分，与示例部分相同。</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用JavaConfig装配"><a href="#使用JavaConfig装配" class="headerlink" title="使用JavaConfig装配"></a>使用JavaConfig装配</h5><p><img src="https://pic.liuxiaopang.cn/spring/aop/%E4%BD%BF%E7%94%A8JavaConfig%E8%A3%85%E9%85%8D%E5%88%87%E9%9D%A2.png" alt="使用JavaConfig装配切面"></p>
+<h5 id="使用XML装配"><a href="#使用XML装配" class="headerlink" title="使用XML装配"></a>使用XML装配</h5><p><img src="https://pic.liuxiaopang.cn/spring/aop/%E4%BD%BF%E7%94%A8XML%E8%A3%85%E9%85%8D%E5%88%87%E9%9D%A2.png" alt="使用XML装配切面"></p>
+<h4 id="非环绕通知示例"><a href="#非环绕通知示例" class="headerlink" title="非环绕通知示例"></a>非环绕通知示例</h4><h5 id="Aspect"><a href="#Aspect" class="headerlink" title="@Aspect"></a>@Aspect</h5><p>示例：定义一个观众的切面</p>
+<p><img src="https://pic.liuxiaopang.cn/spring/aop/%E9%9D%9E%E7%8E%AF%E7%BB%95%E9%80%9A%E7%9F%A5%E7%A4%BA%E4%BE%8B.png" alt="非环绕通知示例"></p>
+<blockquote>
+<p>@Aspect：该注解表明Audience为一个切面。</p>
+</blockquote>
+<blockquote>
+<p>Audience有四个方法，定义了一个观众在观看演出时可能会做的事情。</p>
+<blockquote>
+<p>表演开始前，观众就座takeSeats()并将手机调至静音silenceCellPhones()；</p>
+<p>表演很精彩：观众会鼓掌喝彩applause()。</p>
+<p>表演没有达到观众预期，观众会要求退款demandRefund()。</p>
+</blockquote>
+</blockquote>
+<h5 id="Pointcut"><a href="#Pointcut" class="headerlink" title="@Pointcut()"></a><a name="@Pointcut()">@Pointcut()</a></h5><p>上面程序中，相同的切点表达式<strong><em>重复</em></strong>了四遍，这不是什么光彩的事情。如果我们只定义这个切点一次，然后每次需要的时候引用它，那么会是一个很好的方案。</p>
+<p><img src="https://pic.liuxiaopang.cn/spring/aop/pointcut%E7%A4%BA%E4%BE%8B.png" alt="pointcut示例"></p>
+<blockquote>
+<p>@Pointcut()注解声明频繁使用的切点表达式。它的值是一个切点表达式。</p>
+<blockquote>
+<p>通知注解中的长表达式都替换成了performance()。performance()方法的实际内容并不重要，它只是一个标识，提供@Pointcut注解依附。</p>
+</blockquote>
+</blockquote>
+<h4 id="环绕通知（-Around）示例"><a href="#环绕通知（-Around）示例" class="headerlink" title="环绕通知（@Around）示例"></a><a name="环绕通知">环绕通知（@Around）示例</a></h4><h5 id="重写示例切面"><a href="#重写示例切面" class="headerlink" title="重写示例切面"></a>重写示例切面</h5><p>重写Audience切面使用一个环绕通知代替之前多个不同的前置通知和后置通知。</p>
+<p><img src="https://pic.liuxiaopang.cn/spring/aop/%E7%8E%AF%E7%BB%95%E9%80%9A%E7%9F%A5%E7%A4%BA%E4%BE%8B.png" alt="环绕通知示例"></p>
+<blockquote>
+<p>@Around注解表明watchPerformance()方法会作为performance()切点的环绕通知。</p>
+<blockquote>
+<p>这个通知与前面非环绕通知能达到相同的效果。但是，现在它们位于同一个方法中，不像之前分散在四个不同的通知方法里。</p>
+</blockquote>
+</blockquote>
+<h5 id="ProceedingJoinPoint"><a href="#ProceedingJoinPoint" class="headerlink" title="ProceedingJoinPoint"></a>ProceedingJoinPoint</h5><p>这个新的通知方法它接受一个ProceedingJoinPoint作为参数。<strong><em>这个对象是必须要有的</em></strong>。</p>
+<h6 id="proceed"><a href="#proceed" class="headerlink" title="proceed()"></a>proceed()</h6><p>通过它<code>proceedingJoinPoint.proceed()</code>来调用目标对象方法。如果不调用这个方法的，那么通知会<strong><em>阻塞目标对象的方法</em></strong>调用。有可能这就是你想要的效果，但更多数情况是你希望在某个连接点上执行目标的方法。</p>
+<p>有意思的是，你可以不调用该方法，也可以多次调用该方法，来实现重复逻辑，也就是在被通知方法失败后，进行重复尝试。</p>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    ／**</span><br><span class="line">	 * 目标对象方法</span><br><span class="line">	 *／</span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/say"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">say</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"这是目标方法say（）"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>切面类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Aop</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Around</span>(<span class="string">"execution(void Demo.say())"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">around</span><span class="params">(ProceedingJoinPoint joinPoint)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"这是Around 开始..."</span>);</span><br><span class="line">            <span class="comment">//proceed的影响效果</span></span><br><span class="line">            joinPoint.proceed(); </span><br><span class="line">            System.out.println(<span class="string">"这是Around 结束..."</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line">            System.out.println(<span class="string">"这是一个异常"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before</span>(<span class="string">"execution(void Demo.say())"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">before</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"这是Before ..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span>(<span class="string">"execution(void Demo.say())"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">after</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"After ..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>有<code>proceed()</code>时，返回结果：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">这是Around 开始...</span><br><span class="line">这是Before ...</span><br><span class="line">这是目标方法say（）</span><br><span class="line">这是Around 结束...</span><br><span class="line">After ...</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>无<code>proceed()</code>时，返回结果：阻塞Before和目标方法，直接执行Around结束之后的方法。执行先后顺序见AOP术语部分</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">这是Around 开始...</span><br><span class="line">这是Around 结束...</span><br><span class="line">After ...</span><br></pre></td></tr></table></figure>
+
+<h5 id="环绕通知的补充说明"><a href="#环绕通知的补充说明" class="headerlink" title="环绕通知的补充说明"></a>环绕通知的补充说明</h5><blockquote>
+<p>@Around 这个通知，可以决定方法是否执行，改变传入参数，改变目标对象返回值。 假如该通知返回值为void，则最终结果无返回值。 </p>
+<p>@AfterReturning 和 @AfterThrowing的返回结果不会改变对象返回值 。</p>
+<p>即便有@AfterReturning 和 @AfterThrowing的情况，虽然它们两个在@Around之后执行， 但返回值依旧取决是@Around， </p>
+</blockquote>
+<h3 id="AOP优先级"><a href="#AOP优先级" class="headerlink" title="AOP优先级"></a>AOP优先级</h3><h4 id="被多个Aspect类拦截"><a href="#被多个Aspect类拦截" class="headerlink" title="被多个Aspect类拦截"></a>被多个Aspect类拦截</h4><p>优先级高的切面类里的增强处理的优先级总是比优先级低的切面类中的增强处理的优先级高。</p>
+<blockquote>
+<p>在“进入”连接点时，最高优先级的增强处理将先被织入；</p>
+<p>在“退出”连接点时，最高优先级的增强处理会最后被织入。</p>
+<p>优先级为1的切面类Bean1包含了@Before，优先级为2的切面类Bean2包含了@Around，虽然@Around优先级高于@Before，但由于Bean1的优先级高于Bean2的优先级，因此Bean1中的@Before先被织入。</p>
+</blockquote>
+<p>Spring提供了如下两种解决方案指定不同切面类里的增强处理的优先级：</p>
+<blockquote>
+<p>让切面类实现org.springframework.core.Ordered接口：实现该接口的int getOrder()方法，该方法返回值越小，优先级越高</p>
+<p>直接使用@Order注解来修饰一个切面类：使用这个注解时可以配置一个int类型的value属性，该属性值越小，优先级越高</p>
+</blockquote>
+<h4 id="被同一个Aspect类的多个方法拦截"><a href="#被同一个Aspect类的多个方法拦截" class="headerlink" title="被同一个Aspect类的多个方法拦截"></a>被同一个Aspect类的多个方法拦截</h4><p>同一个切面类里的两个相同类型的增强处理在同一个连接点被织入时，Spring AOP将以随机的顺序来织入这两个增强处理，没有办法指定它们的织入顺序。即使给这两个 advice 添加了 @Order 这个注解，也不行！</p>
+<p><img src="https://pic.liuxiaopang.cn/spring/aop/%E8%A2%AB%E5%90%8C%E4%B8%80%E4%B8%AA%E5%88%87%E9%9D%A2%E5%A4%9A%E4%B8%AA%E6%96%B9%E6%B3%95%E6%8B%A6%E6%88%AA%E6%97%A0%E6%B3%95%E6%8E%92%E5%BA%8F.png" alt="被同一个切面多个方法拦截无法排序"></p>
+<h3 id="通过注解为目标对象引用新功能"><a href="#通过注解为目标对象引用新功能" class="headerlink" title="通过注解为目标对象引用新功能"></a>通过注解为目标对象引用新功能</h3><p>到目前为止，都是通知目标对象已有的方法。但是，方法包装仅仅是切面所能实现的功能之一。以下示例，为目标对象引入全新的功能。切面只是实现了目标对象bean相同相同接口的代理。同样代理可能暴露新接口。这样，目标对象bean看起来就像谁实现了新的接口。</p>
+<blockquote>
+<p>为对象已经拥有的方法添加新功能，和为对象添加新方法的区别。</p>
+</blockquote>
+<p><img src="https://pic.liuxiaopang.cn/spring/aop/%E5%90%91aop%E4%B8%AD%E5%BC%95%E5%85%A5%E6%96%B0%E6%96%B9%E6%B3%95.png" alt="向aop中引入新方法"></p>
+<p>我们需要注意的是，当引入代理的方法被调用时，代理会把该调用委托给一个其他对象，该对象实现了这个新的方法。实际上，一个bean的实现被拆分到了多个类中。</p>
+<h4 id="DeclareParents"><a href="#DeclareParents" class="headerlink" title="@DeclareParents"></a>@DeclareParents</h4><blockquote>
+<p>目标对象</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> concert;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 定义一个现场表演的接口，如舞台剧、音乐会等。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Performance</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">perform</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>目标对象实现</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PerformanceImpl</span> <span class="keyword">implements</span>  <span class="title">Performance</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">perform</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"PerformanceImpl ..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>引入的方法</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> concert;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 现场表演结束后，应观众要求进行的返场表演。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Encoreable</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">performEncore</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>引入接口实现</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EncoreableImpl</span> <span class="keyword">implements</span>  <span class="title">Encoreable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">performEncore</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"performEncoreImpl ..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>现在需要有一种方式将这个接口应用到Performance实现中。</p>
+</blockquote>
+<p>假设我们能够访问所有performance的实现，那么我们可以修改它们，<del>让它们再次实现Encoreable接口</del>。但从设计角度来看，这并不是一个好办法。一方面，并不是所有的Performance都具有Encoreable特性；另一方面，当没有源码的时候就无法修改所有的performance实现。</p>
+<blockquote>
+<p>通过AOP的引入功能，可以避免侵入性地改变现在的实现。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> concert;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.annotation.Aspect;</span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.annotation.DeclareParents;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 定义一个切面。但是，它与我们之前创建的切面不同，它并没有提供任何通知。</span></span><br><span class="line"><span class="comment">* 而是通过<span class="doctag">@DeclareParents</span>注解，将Encoreable接口引入到Performance bean中。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EncoreableIntroducer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@DeclareParents</span>(value=<span class="string">"concert.Performance+"</span>,</span><br><span class="line">                  defaultImpl=EncoreableImpl.class)</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> Encoreable encoreable;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong><em><code>@DeclareParents()</code></em></strong>注解由三个部分组成：</p>
+<ol>
+<li><p>value属性指定了哪种类型的bean要引入该接口。在本例中，也就是所有实现Performance的类型。</p>
+<blockquote>
+<p>concert.Performance+ 的“+”号代表的是Performance的所有子类型，而不是Performance类型。    </p>
+</blockquote>
+</li>
+<li><p>defaultImpl属性指定了为引入功能提供的实现类。这里，我们指定是EncoreableImpl提供实现。</p>
+</li>
+<li><p>@DeclareParents注解所标注的静态属性指明了要引入的接口。这里我们引入的是Encoreable接口。</p>
+</li>
+</ol>
+<p>Spring发现一个@Aspect注解时，就会创建一个代理，然后将调用委托给被代理的bean或者是被引入的实现，这取决于调用的方法属于目标对象的bean还是被引入的接口。</p>
+<blockquote>
+<p>Main测试方法</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Performance performance;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/test"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">        performance.perform();</span><br><span class="line">        <span class="keyword">if</span> (performance <span class="keyword">instanceof</span> Encoreable) &#123;</span><br><span class="line">            Encoreable encoreable = (Encoreable) <span class="keyword">this</span>.performance;</span><br><span class="line">            encoreable.performEncore();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PerformanceImpl ...</span><br><span class="line">performEncoreImpl ...</span><br></pre></td></tr></table></figure>
+
+<h4 id="异常解决"><a href="#异常解决" class="headerlink" title="异常解决"></a>异常解决</h4><ul>
+<li>SpringBoot 版本2.X之后@DeclareParents会报错（有解决办法时，再更新）。目前解决办法，更改SpringBoot版本</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;parent&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.5.7.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/parent&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>注入的时候，采用目标对象接口类型（Performance）。如果直接注入实现类（PerformanceImpl）报错。因为：所有Performance子集都只是目标对象的动态代理。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> PerformanceImpl performance;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic.liuxiaopang.cn/spring/aop/%E6%B3%A8%E5%85%A5%E5%87%BA%E9%94%99%E6%8F%90%E7%A4%BA.png" alt="注入出错提示"></p>
+<ul>
+<li>如果目标对象有多个实现类，如 PerformanceImpl1 和 PerformanceImpl2，按如下区分</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> Performance performanceImpl1 ;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> Performance performanceImpl2;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/11/附录-注解汇总/" rel="next" title="附录--注解汇总">
+                <i class="fa fa-chevron-left"></i> 附录--注解汇总
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="LiuBo">
+            
+              <p class="site-author-name" itemprop="name">LiuBo</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring对AOP的支持"><span class="nav-number">1.</span> <span class="nav-text">Spring对AOP的支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP术语"><span class="nav-number">2.</span> <span class="nav-text">AOP术语</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#通知（Advice）"><span class="nav-number">2.1.</span> <span class="nav-text">通知（Advice）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接点（Join-Point）"><span class="nav-number">2.2.</span> <span class="nav-text">连接点（Join Point）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#切点（Poincut）"><span class="nav-number">2.3.</span> <span class="nav-text">切点（Poincut）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#切面（Aspect）"><span class="nav-number">2.4.</span> <span class="nav-text">切面（Aspect）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#引入（Introduction）"><span class="nav-number">2.5.</span> <span class="nav-text">引入（Introduction）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#织入（Weaving）"><span class="nav-number">2.6.</span> <span class="nav-text">织入（Weaving）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#切点"><span class="nav-number">3.</span> <span class="nav-text">切点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#切点表达式"><span class="nav-number">3.1.</span> <span class="nav-text">切点表达式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#格式"><span class="nav-number">3.2.</span> <span class="nav-text">格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#切点表达式示例"><span class="nav-number">3.3.</span> <span class="nav-text">切点表达式示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#处理通知中的参数"><span class="nav-number">3.4.</span> <span class="nav-text">处理通知中的参数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#JoinPoint"><span class="nav-number">3.4.1.</span> <span class="nav-text">JoinPoint</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在切点中选择bean"><span class="nav-number">3.5.</span> <span class="nav-text">在切点中选择bean</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#切面"><span class="nav-number">4.</span> <span class="nav-text">切面</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引入切面"><span class="nav-number">4.1.</span> <span class="nav-text">引入切面</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#使用Spring-Boot装配"><span class="nav-number">4.1.1.</span> <span class="nav-text">使用Spring Boot装配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用JavaConfig装配"><span class="nav-number">4.1.2.</span> <span class="nav-text">使用JavaConfig装配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用XML装配"><span class="nav-number">4.1.3.</span> <span class="nav-text">使用XML装配</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#非环绕通知示例"><span class="nav-number">4.2.</span> <span class="nav-text">非环绕通知示例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Aspect"><span class="nav-number">4.2.1.</span> <span class="nav-text">@Aspect</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Pointcut"><span class="nav-number">4.2.2.</span> <span class="nav-text">@Pointcut()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#环绕通知（-Around）示例"><span class="nav-number">4.3.</span> <span class="nav-text">环绕通知（@Around）示例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#重写示例切面"><span class="nav-number">4.3.1.</span> <span class="nav-text">重写示例切面</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ProceedingJoinPoint"><span class="nav-number">4.3.2.</span> <span class="nav-text">ProceedingJoinPoint</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#proceed"><span class="nav-number">4.3.2.1.</span> <span class="nav-text">proceed()</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#环绕通知的补充说明"><span class="nav-number">4.3.3.</span> <span class="nav-text">环绕通知的补充说明</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP优先级"><span class="nav-number">5.</span> <span class="nav-text">AOP优先级</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#被多个Aspect类拦截"><span class="nav-number">5.1.</span> <span class="nav-text">被多个Aspect类拦截</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#被同一个Aspect类的多个方法拦截"><span class="nav-number">5.2.</span> <span class="nav-text">被同一个Aspect类的多个方法拦截</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过注解为目标对象引用新功能"><span class="nav-number">6.</span> <span class="nav-text">通过注解为目标对象引用新功能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DeclareParents"><span class="nav-number">6.1.</span> <span class="nav-text">@DeclareParents</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异常解决"><span class="nav-number">6.2.</span> <span class="nav-text">异常解决</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LiuBo</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by"></div>
+
+
+
+ 
+
+
+
+  <div class="theme-info"></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.2"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.2"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

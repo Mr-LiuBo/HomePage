@@ -94,18 +94,18 @@
 
 
 
-  <meta name="description" content="Hibernate相关注解@Column @Column(name=”COLUMN_NAME”,unique=true) 常用属性： name：列名unique：是否唯一nullable：是否可空length：对于字符指定最大长度insertable：是否允许插入updatetable：是否允许更新columnDefiniton：建表时创建此列DDLsecondaryTable:从表名">
+  <meta name="description" content="整理SpringBoot相关注解，不只限于Hibernate、MyBatis等。并持续更新维护。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="附录--注解汇总">
 <meta property="og:url" content="http://yoursite.com/2019/07/11/附录-注解汇总/index.html">
 <meta property="og:site_name" content="Biu__">
-<meta property="og:description" content="Hibernate相关注解@Column @Column(name=”COLUMN_NAME”,unique=true) 常用属性： name：列名unique：是否唯一nullable：是否可空length：对于字符指定最大长度insertable：是否允许插入updatetable：是否允许更新columnDefiniton：建表时创建此列DDLsecondaryTable:从表名">
+<meta property="og:description" content="整理SpringBoot相关注解，不只限于Hibernate、MyBatis等。并持续更新维护。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pic.liuxiaopang.cn/spring/RequestParam%E7%A4%BA%E4%BE%8B.png">
-<meta property="og:updated_time" content="2019-07-11T08:45:17.954Z">
+<meta property="og:updated_time" content="2019-07-12T11:01:08.290Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="附录--注解汇总">
-<meta name="twitter:description" content="Hibernate相关注解@Column @Column(name=”COLUMN_NAME”,unique=true) 常用属性： name：列名unique：是否唯一nullable：是否可空length：对于字符指定最大长度insertable：是否允许插入updatetable：是否允许更新columnDefiniton：建表时创建此列DDLsecondaryTable:从表名">
+<meta name="twitter:description" content="整理SpringBoot相关注解，不只限于Hibernate、MyBatis等。并持续更新维护。">
 <meta name="twitter:image" content="https://pic.liuxiaopang.cn/spring/RequestParam%E7%A4%BA%E4%BE%8B.png">
 
 
@@ -356,13 +356,23 @@
                 
               
 
-              <time title="创建时间：2019-07-11 15:48:19 / 修改时间：16:45:17" itemprop="dateCreated datePublished" datetime="2019-07-11T15:48:19+08:00">2019-07-11</time>
+              <time title="创建时间：2019-07-11 15:48:19" itemprop="dateCreated datePublished" datetime="2019-07-11T15:48:19+08:00">2019-07-11</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-12 19:01:08" itemprop="dateModified" datetime="2019-07-12T19:01:08+08:00">2019-07-12</time>
+              </span>
             
           
 
@@ -420,111 +430,127 @@
       
 
       
-        <h3 id="Hibernate相关注解"><a href="#Hibernate相关注解" class="headerlink" title="Hibernate相关注解"></a>Hibernate相关注解</h3><h4 id="Column"><a href="#Column" class="headerlink" title="@Column"></a>@Column</h4><blockquote>
-<p>@Column(name=”COLUMN_NAME”,unique=true)</p>
-<p>常用属性：</p>
-<p>name：列名<br>unique：是否唯一<br>nullable：是否可空<br>length：对于字符指定最大长度<br>insertable：是否允许插入<br>updatetable：是否允许更新<br>columnDefiniton：建表时创建此列DDL<br>secondaryTable:从表名</p>
-</blockquote>
+        <div class="note danger">
+            <p>整理SpringBoot相关注解，不只限于Hibernate、MyBatis等。并持续更新维护。</p>
+          </div>
+
+
+
 <a id="more"></a>
 
-<h4 id="DynamicInsert、-DynamicUpdate"><a href="#DynamicInsert、-DynamicUpdate" class="headerlink" title="@DynamicInsert、@DynamicUpdate"></a>@DynamicInsert、@DynamicUpdate</h4><ul>
-<li>hibernate和JPA的注解，注解在实体类上</li>
-<li>动态插入和更新</li>
-<li>默认是false，当设置为true时，如果该字段的值为null，则不会加入到inset和update语句中</li>
-</ul>
-<h4 id="Entity"><a href="#Entity" class="headerlink" title="@Entity"></a>@Entity</h4><ul>
-<li>hibernate中该注解说明这是一个实体类，并且使用默认的orm规则。即class名即数据库表名，class字段名即表彰的字段名。如果想改变这种ORM规则。要使用@Table和@Column</li>
-</ul>
+
+
+<h3 id="Hibernate相关注解"><a href="#Hibernate相关注解" class="headerlink" title="Hibernate相关注解"></a>Hibernate相关注解</h3><h4 id="Column"><a href="#Column" class="headerlink" title="@Column"></a>@Column</h4><div class="note warning">
+            <p>@Column(name=”COLUMN_NAME”,unique=true)</p><p>常用属性：</p><ul><li>name：列名<br>unique：是否唯一<br>nullable：是否可空<br>length：对于字符指定最大长度<br>insertable：是否允许插入<br>updatetable：是否允许更新<br>columnDefiniton：建表时创建此列DDL<br>secondaryTable:从表名</li></ul>
+          </div>
+
+<h4 id="DynamicInsert、-DynamicUpdate"><a href="#DynamicInsert、-DynamicUpdate" class="headerlink" title="@DynamicInsert、@DynamicUpdate"></a>@DynamicInsert、@DynamicUpdate</h4><div class="note warning">
+            <ul><li>hibernate和JPA的注解，注解在实体类上</li><li>动态插入和更新</li><li>默认是false，当设置为true时，如果该字段的值为null，则不会加入到inset和update语句中</li></ul>
+          </div>
+
+<h4 id="Entity"><a href="#Entity" class="headerlink" title="@Entity"></a>@Entity</h4><div class="note warning">
+            <ul><li>hibernate中该注解说明这是一个实体类，并且使用默认的orm规则。即class名即数据库表名，class字段名即表彰的字段名。如果想改变这种ORM规则。要使用@Table和@Column</li></ul>
+          </div>
+
 <h4 id="GeneratorValue、-GenercGenerator"><a href="#GeneratorValue、-GenercGenerator" class="headerlink" title="@GeneratorValue、@GenercGenerator"></a>@GeneratorValue、@GenercGenerator</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment"> * 两条注解演示使用hibernate的uuid主键生成器</span></span><br><span class="line"><span class="comment"> * JPA两种注解方式：</span></span><br><span class="line"><span class="comment"> * 1. 注解在字段前</span></span><br><span class="line"><span class="comment"> * 2. 注解在getter方法前（与Spring正好相反）</span></span><br><span class="line"><span class="comment"> * 同一个实体类必须有且只有一种注解方式。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@GeneratorValue</span>(generator=<span class="string">"hibernate-uuid"</span>)</span><br><span class="line"><span class="meta">@GenercGenerator</span>(name=<span class="string">"hibernate-uuid"</span> ,strategy=<span class="string">"uuid"</span>)</span><br></pre></td></tr></table></figure>
 
-<h5 id="GeneratorValue"><a href="#GeneratorValue" class="headerlink" title="@GeneratorValue"></a>@GeneratorValue</h5><p>JPA通用策略生成器属性：generator：主键生成器分配一个名称。</p>
-<h5 id="GenercGenerator"><a href="#GenercGenerator" class="headerlink" title="@GenercGenerator"></a>@GenercGenerator</h5><p>自定义主键生成策略，具有如下属性</p>
-<blockquote>
-<p>name：生成器名称<br>strategy：生成器类名<br>parameters：参数 </p>
-</blockquote>
-<h4 id="Id"><a href="#Id" class="headerlink" title="@Id"></a>@Id</h4><ul>
-<li>hibernate中该注解，用于成员变量，说明这是一个主键</li>
-</ul>
-<h4 id="Tbale"><a href="#Tbale" class="headerlink" title="@Tbale"></a>@Tbale</h4><ul>
-<li>用于hibernate中注解，@Tbale(name=”TABLE_NAME”)</li>
-</ul>
-<h3 id="Lombok"><a href="#Lombok" class="headerlink" title="Lombok"></a>Lombok</h3><h4 id="Data、-Get、-Set"><a href="#Data、-Get、-Set" class="headerlink" title="@Data、@Get、@Set"></a>@Data、@Get、@Set</h4><ul>
-<li><p>实体类省略get/set、toString方法，pom.xml引入依赖 。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h5 id="GeneratorValue"><a href="#GeneratorValue" class="headerlink" title="@GeneratorValue"></a>@GeneratorValue</h5><div class="note warning">
+            <p>JPA通用策略生成器属性：generator：主键生成器分配一个名称。</p>
+          </div>
 
-</li>
-</ul>
-<h4 id="Slf4j"><a href="#Slf4j" class="headerlink" title="@Slf4j"></a>@Slf4j</h4><ul>
-<li>日志logback，需要引入lombok</li>
-</ul>
-<h3 id="MyBatis"><a href="#MyBatis" class="headerlink" title="MyBatis"></a>MyBatis</h3><h4 id="Parm"><a href="#Parm" class="headerlink" title="@Parm"></a>@Parm</h4><ul>
-<li><p>用于注解dao层的方法入参的参数名，简化xml配置</p>
-</li>
-<li><p><a href="https://app.yinxiang.com/shard/s16/nl/4456805/1ce94d54-34bc-4342-a414-212835113ee5" target="_blank" rel="noopener">MyBatis（DAO -&gt; XML）传参</a></p>
-</li>
-</ul>
-<h3 id="数据显示格式化"><a href="#数据显示格式化" class="headerlink" title="数据显示格式化"></a>数据显示格式化</h3><h4 id="JsonProperty"><a href="#JsonProperty" class="headerlink" title="@JsonProperty"></a>@JsonProperty</h4><ul>
-<li>指定返回的json数据的key</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonProperty</span>(<span class="string">"name"</span>)</span><br><span class="line"><span class="keyword">private</span> String deptName;</span><br></pre></td></tr></table></figure>
+<h5 id="GenercGenerator"><a href="#GenercGenerator" class="headerlink" title="@GenercGenerator"></a>@GenercGenerator</h5><div class="note warning">
+            <p>自定义主键生成策略，具有如下属性</p><p> name：生成器名称<br> strategy：生成器类名<br> parameters：参数 </p>
+          </div>
 
-<h4 id="RequestParam"><a href="#RequestParam" class="headerlink" title="@RequestParam"></a>@RequestParam</h4><ul>
-<li>@RequestParam(name=”id”,required=false,defaultValue=”0”) String deteId</li>
-<li>name指定传参名称（value与name作用完全相同，源码中互相为别名）</li>
-<li>required=false 可空 ，默认是不为空</li>
-<li>defaultValue 缺省时默认值</li>
-<li>get请求传List等参数类型时也需要添加该注解，并指定name/value</li>
-</ul>
-<p><img src="https://pic.liuxiaopang.cn/spring/RequestParam%E7%A4%BA%E4%BE%8B.png" alt="RequestParam示例"></p>
-<h4 id="RequestBody"><a href="#RequestBody" class="headerlink" title="@RequestBody"></a>@RequestBody</h4><ul>
-<li>读取Resquest请求的body部分数据，使用系统默认的HttpMseeageConverter进行解析，然后把相应的数据绑定要返回的对象上，再把HttpMseeageConverter返回的对象数据绑定到Controller中方法的参数上</li>
-</ul>
-<h4 id="ResponseBody"><a href="#ResponseBody" class="headerlink" title="@ResponseBody"></a>@ResponseBody</h4><ul>
-<li>将Controller的方法返回的对象，通过适当的HttpMessageConverter转换为制定格式后，写入到Response对象的body数据区，使用情况：返回的数据不是Html标签的页面，而是其他数据格式的数据时，（如Json、xml等）使用；</li>
-</ul>
-<h4 id="持久层查询时间返回的是long值"><a href="#持久层查询时间返回的是long值" class="headerlink" title="持久层查询时间返回的是long值"></a>持久层查询时间返回的是long值</h4><p>实体类根据json包添加响应注解</p>
+<h4 id="Id"><a href="#Id" class="headerlink" title="@Id"></a>@Id</h4><div class="note warning">
+            <ul><li>hibernate中该注解，用于成员变量，说明这是一个主键</li></ul>
+          </div>
+
+<h4 id="Tbale"><a href="#Tbale" class="headerlink" title="@Tbale"></a>@Tbale</h4><div class="note warning">
+            <ul><li>用于hibernate中注解，@Tbale(name=”TABLE_NAME”)</li></ul>
+          </div>
+
+
+
+<h3 id="Lombok"><a href="#Lombok" class="headerlink" title="Lombok"></a>Lombok</h3><h4 id="Data、-Get、-Set"><a href="#Data、-Get、-Set" class="headerlink" title="@Data、@Get、@Set"></a>@Data、@Get、@Set</h4><div class="note warning">
+            <ul><li><p>实体类省略get/set、toString方法，pom.xml引入依赖 。</p>undefined</li></ul>
+          </div>
+
+<h4 id="Slf4j"><a href="#Slf4j" class="headerlink" title="@Slf4j"></a>@Slf4j</h4><div class="note warning">
+            <ul><li>日志logback，需要引入lombok</li></ul>
+          </div>
+
+
+
+<h3 id="MyBatis"><a href="#MyBatis" class="headerlink" title="MyBatis"></a>MyBatis</h3><h4 id="Parm"><a href="#Parm" class="headerlink" title="@Parm"></a>@Parm</h4><div class="note warning">
+            <ul><li><p>用于注解dao层的方法入参的参数名，简化xml配置</p></li><li><p><a href="https://app.yinxiang.com/shard/s16/nl/4456805/1ce94d54-34bc-4342-a414-212835113ee5" target="_blank" rel="noopener">MyBatis（DAO -&gt; XML）传参</a></p></li></ul>
+          </div>
+
+
+
+
+
+<h3 id="数据显示格式化"><a href="#数据显示格式化" class="headerlink" title="数据显示格式化"></a>数据显示格式化</h3><h4 id="JsonProperty"><a href="#JsonProperty" class="headerlink" title="@JsonProperty"></a>@JsonProperty</h4><div class="note warning">
+            <ul><li>指定返回的json数据的key</li></ul>undefined
+          </div>
+
+<h4 id="RequestParam"><a href="#RequestParam" class="headerlink" title="@RequestParam"></a>@RequestParam</h4><div class="note warning">
+            <ul><li>@RequestParam(name=”id”,required=false,defaultValue=”0”) String deteId</li><li>name指定传参名称（value与name作用完全相同，源码中互相为别名）</li><li>required=false 可空 ，默认是不为空</li><li>defaultValue 缺省时默认值</li><li>get请求传List等参数类型时也需要添加该注解，并指定name/value</li></ul><p><img src="https://pic.liuxiaopang.cn/spring/RequestParam%E7%A4%BA%E4%BE%8B.png" alt="RequestParam示例"></p>
+          </div>
+
+<h4 id="RequestBody"><a href="#RequestBody" class="headerlink" title="@RequestBody"></a>@RequestBody</h4><div class="note warning">
+            <ul><li>读取Resquest请求的body部分数据，使用系统默认的HttpMseeageConverter进行解析，然后把相应的数据绑定要返回的对象上，再把HttpMseeageConverter返回的对象数据绑定到Controller中方法的参数上</li></ul>
+          </div>
+
+<h4 id="ResponseBody"><a href="#ResponseBody" class="headerlink" title="@ResponseBody"></a>@ResponseBody</h4><div class="note warning">
+            <ul><li>将Controller的方法返回的对象，通过适当的HttpMessageConverter转换为制定格式后，写入到Response对象的body数据区，使用情况：返回的数据不是Html标签的页面，而是其他数据格式的数据时，（如Json、xml等）使用；</li></ul>
+          </div>
+
+<h4 id="持久层查询时间返回的是long值"><a href="#持久层查询时间返回的是long值" class="headerlink" title="持久层查询时间返回的是long值"></a>持久层查询时间返回的是long值</h4><div class="note warning">
+            <p>实体类根据json包添加响应注解</p>
+          </div>
+
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JSONField</span>(format = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>)  <span class="comment">//FastJson包使用注解</span></span><br><span class="line"><span class="meta">@JsonFormat</span>(pattern = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>,timezone = <span class="string">"GMT+8"</span>) <span class="comment">//Jackson包使用注解</span></span><br><span class="line"><span class="meta">@DateTimeFormat</span>(pattern = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>)   <span class="comment">//格式化前台日期参数注解</span></span><br><span class="line"><span class="keyword">private</span> Date createTime;</span><br></pre></td></tr></table></figure>
 
-<h3 id="依赖注入"><a href="#依赖注入" class="headerlink" title="依赖注入"></a>依赖注入</h3><h4 id="Autowired"><a href="#Autowired" class="headerlink" title="@Autowired"></a>@Autowired</h4><p><code>@Autowire</code>注解按照<strong>类型</strong>，即注解的字段的类型寻找该类型的实例bean，这种方式成为byType。（先按byType方式，没找到通过byName方式，再失败后报错）。通常与@Qualifier配合使用。</p>
-<ul>
-<li><p>用于成员变量。</p>
-</li>
-<li><p>适用方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUser</span><span class="params">(User user)</span></span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.user = user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="依赖注入"><a href="#依赖注入" class="headerlink" title="依赖注入"></a>依赖注入</h3><h4 id="Autowired"><a href="#Autowired" class="headerlink" title="@Autowired"></a>@Autowired</h4><div class="note warning">
+            <p><code>@Autowire</code>注解按照<strong>类型</strong>，即注解的字段的类型寻找该类型的实例bean，这种方式成为byType。（先按byType方式，没找到通过byName方式，再失败后报错）。通常与@Qualifier配合使用。</p><ul><li><p>用于成员变量。</p></li><li><p>适用方法。</p></li></ul>
+          </div>
 
-</li>
-</ul>
-<h4 id="ImportResource"><a href="#ImportResource" class="headerlink" title="@ImportResource"></a>@ImportResource</h4><ul>
-<li>用于配置类，可以使用@ImportResource从一个或多个XML文件中导入bean的定义</li>
-</ul>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUser</span><span class="params">(User user)</span></span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.user = user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ImportResource"><a href="#ImportResource" class="headerlink" title="@ImportResource"></a>@ImportResource</h4><div class="note warning">
+            <ul><li>用于配置类，可以使用@ImportResource从一个或多个XML文件中导入bean的定义</li></ul>
+          </div>
+
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ImportResource</span>(locations = &#123;<span class="string">"classpath:spring/app-context.xml"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorldConfiguration</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="Qualifier"><a href="#Qualifier" class="headerlink" title="@Qualifier"></a>@Qualifier</h4><p><code>@Qualifier(&quot;XXX&quot;)</code> Spring的Bean注入配置注解，该注解指定注入的Bean的名称。</p>
-<h4 id="Resource"><a href="#Resource" class="headerlink" title="@Resource"></a>@Resource</h4><p><code>@Resource</code>是JDK提供的注解，默认就是按照byName的方式寻找bean，一般一个name对应一个bean，当找不到与名称匹配的bean才会按照类型装配（byType），再找不到报错。</p>
-<h4 id="Scope"><a href="#Scope" class="headerlink" title="@Scope"></a>@Scope</h4><p>配合@Component或者@Bean一起使用。用于声明该Bean的作用域。</p>
-<blockquote>
-<p>针对<strong>会话、请求</strong>情况，必须指定<code>proxyMode</code>属性 如：<br>@Scope(value = “session”,proxyMode = ScopedProxyMode.TARGET_CLASS)</p>
-</blockquote>
-<blockquote>
-<p>注入的是类，proxyMode 可以是 ScopedProxyMode.TARGET_CLASS；</p>
-<p>接口的情况下，取值是 ScopedProxyMode.INTERFACES</p>
-</blockquote>
-<p>详细示例可参考：<a href="/2019/07/11/1-Spring定义Bean/">SpringBean定义的修改作用域部分</a></p>
-<h3 id="配置相关"><a href="#配置相关" class="headerlink" title="配置相关"></a>配置相关</h3><h4 id="ComponentScan"><a href="#ComponentScan" class="headerlink" title="@ComponentScan"></a>@ComponentScan</h4><blockquote>
-<p>默认规则下，它会扫描该注解所在类同包目录下组件。指定扫描包有以下方式。</p>
-<ul>
-<li><code>@ComponentScan(&quot;packageName&quot;)</code><br>或 <code>@ComponentScan(basePackages={&quot;package1&quot;,&quot;package2&quot;})</code></li>
-<li><code>@ComponentScan(basePackageClasses={ClassName1.class,ClassName2.class}</code></li>
-</ul>
-</blockquote>
-<h4 id="Configuration"><a href="#Configuration" class="headerlink" title="@Configuration"></a>@Configuration</h4><ul>
-<li>作用于类，此注解标明这是一个Spring 的配置类，在项目启动的时候，会自动扫描此配置；</li>
-</ul>
+<h4 id="Qualifier"><a href="#Qualifier" class="headerlink" title="@Qualifier"></a>@Qualifier</h4><div class="note warning">
+            <p><code>@Qualifier(&quot;XXX&quot;)</code> Spring的Bean注入配置注解，该注解指定注入的Bean的名称。</p>
+          </div>
+
+<h4 id="Resource"><a href="#Resource" class="headerlink" title="@Resource"></a>@Resource</h4><div class="note warning">
+            <p><code>@Resource</code>是JDK提供的注解，默认就是按照byName的方式寻找bean，一般一个name对应一个bean，当找不到与名称匹配的bean才会按照类型装配（byType），再找不到报错。</p>
+          </div>
+
+<h4 id="Scope"><a href="#Scope" class="headerlink" title="@Scope"></a>@Scope</h4><div class="note warning">
+            <p>配合@Component或者@Bean一起使用。用于声明该Bean的作用域。</p><p> 针对<strong>会话、请求</strong>情况，必须指定<code>proxyMode</code>属性 如：<br> @Scope(value = “session”,proxyMode = ScopedProxyMode.TARGET_CLASS)</p><p> 注入的是类，proxyMode 可以是 ScopedProxyMode.TARGET_CLASS；</p><p> 接口的情况下，取值是 ScopedProxyMode.INTERFACES</p><p>详细示例可参考：<a href="/2019/07/11/1-Spring定义Bean/">SpringBean定义的修改作用域部分</a></p>
+          </div>
+
+
+
+<h3 id="配置相关"><a href="#配置相关" class="headerlink" title="配置相关"></a>配置相关</h3><h4 id="ComponentScan"><a href="#ComponentScan" class="headerlink" title="@ComponentScan"></a>@ComponentScan</h4><div class="note warning">
+            <p>默认规则下，它会扫描该注解所在类同包目录下组件。指定扫描包有以下方式。</p><ul><li><code>@ComponentScan(&quot;packageName&quot;)</code><br>或 <code>@ComponentScan(basePackages={&quot;package1&quot;,&quot;package2&quot;})</code></li><li><code>@ComponentScan(basePackageClasses={ClassName1.class,ClassName2.class}</code></li></ul>
+          </div>
+<h4 id="Configuration"><a href="#Configuration" class="headerlink" title="@Configuration"></a>@Configuration</h4><div class="note warning">
+            <ul><li>作用于类，此注解标明这是一个Spring 的配置类，在项目启动的时候，会自动扫描此配置；</li></ul>
+          </div>
+
 <h4 id="ConfigurationProperties"><a href="#ConfigurationProperties" class="headerlink" title="@ConfigurationProperties"></a>@ConfigurationProperties</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这个注解中的prefix 会获取properties文件中的spring.datasource.primary开头的value值；</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix=”spring.datasource.primary” )  </span><br><span class="line"><span class="comment">//locations可以指定自定义properties</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(locations=<span class="string">"classpath:config/user.properties"</span>, prefix=<span class="string">"spring.datasource.primary"</span>) </span><br><span class="line"></span><br><span class="line"><span class="comment">//示例：</span></span><br><span class="line"><span class="keyword">package</span> com.example.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.context.properties.ConfigurationProperties;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"test"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="PropertySource"><a href="#PropertySource" class="headerlink" title="@PropertySource"></a>@PropertySource</h4><ul>
-<li>用于类，这个注解是读取properties文件 不需要我们自己写读取properties的文件的代码，SpringBoot帮我们完成了，十分方便；classpath一定不能丢；</li>
-</ul>
+<h4 id="PropertySource"><a href="#PropertySource" class="headerlink" title="@PropertySource"></a>@PropertySource</h4><div class="note warning">
+            <ul><li>用于类，这个注解是读取properties文件 不需要我们自己写读取properties的文件的代码，SpringBoot帮我们完成了，十分方便；classpath一定不能丢；</li></ul>
+          </div>
+
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PropertySource</span>(value = &#123;<span class="string">"classpath:conf/copyWriteUI.properties"</span>&#125;,encoding = <span class="string">"utf-8"</span>)</span><br></pre></td></tr></table></figure>
 
 
@@ -566,6 +592,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/15/2-AOP/" rel="prev" title="2.AOP">
+                2.AOP <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -636,7 +666,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-count">4</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
